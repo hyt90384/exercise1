@@ -63,6 +63,7 @@
 
                 // Get Observations for the selected patient
                 client.request("/Observation?patient=" + client.patient.id, {
+                    resolveReferences: [ "observationReference" ],
                     graph: true
                 })
 
@@ -73,6 +74,7 @@
                     }
                     return data.entry;
                 })
+                
 
                 // Render the current patient's observations (or any error)
                 .then(
