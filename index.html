@@ -21,6 +21,8 @@
         <br/>
         <h4>Medications</h4>
         <div id="meds">Loading...</div>
+        <h4>Obervations</h4>
+        <div id="obs">Loading...</div>
         <script type="text/javascript">
             FHIR.oauth2.ready().then(function(client) {
                 
@@ -56,6 +58,29 @@
                     },
                     function(error) {
                         document.getElementById("meds").innerText = error.stack;
+                    }
+                );
+
+                // Get Observations for the selected patient
+                client.request("/Observation?patient=" + client.patient.id, {
+                    graph: true
+                })
+
+                // Reject if no Observations are found
+                .then(function(data) {
+                    if (!data.entry || !data.entry.length) {
+                        throw new Error("No observations found for the selected patient");
+                    }
+                    return data.entry;
+                })
+
+                // Render the current patient's observations (or any error)
+                .then(
+                    function(obs) {
+                        document.getElementById("obs").innerText = JSON.stringify(obs, null, 4);
+                    },
+                    function(error) {
+                        document.getElementById("obs").innerText = error.stack;
                     }
                 );
 
